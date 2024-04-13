@@ -33,13 +33,7 @@ app.use(
   })
 );
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL,
-    credentials: true,
-    methods: ["GET", "POST", "DELETE", "PUT"],
-  })
-);
+app.use(cors());
 app.options("*", cors());
 
 //<---------------test api
