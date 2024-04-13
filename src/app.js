@@ -5,7 +5,7 @@ import morgan from "morgan";
 import bodyParser from "body-parser";
 import { erroMiddleware } from "./middlewares/error.js";
 import cookieParser from "cookie-parser";
-// import cors from "cors";
+import cors from "cors";
 
 //importing routes
 import otpRoutes from "./routes/otpRoutes.js";
@@ -33,14 +33,14 @@ app.use(
   })
 );
 app.use(cookieParser());
-// app.use(
-//   cors({
-//     origin: process.env.FRONTEND_URL,
-//     credentials: true,
-//     methods: ["GET", "POST", "DELETE", "PUT"],
-//   })
-// );
-// app.options("*", cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+    methods: ["GET", "POST", "DELETE", "PUT"],
+  })
+);
+app.options("*", cors());
 
 //<---------------test api
 app.get("/", (req, res) => {

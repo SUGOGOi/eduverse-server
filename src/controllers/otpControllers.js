@@ -46,6 +46,7 @@ export const sendOtpEmail = async (req, res, next) => {
     return res.status(200).json({
       success: true,
       message: `OTP has been send to ${otpUser.email}`,
+      email,
     });
   } catch (error) {
     console.log(error);
@@ -56,6 +57,8 @@ export const sendOtpEmail = async (req, res, next) => {
 export const verifyOtpEmail = async (req, res, next) => {
   try {
     const { otp } = req.body;
+    const { email } = req.query;
+    console.log(email);
     console.log(otp);
     if (!otp) {
       return next(new ErrorHandler("please enter otp ", 400));
@@ -65,6 +68,7 @@ export const verifyOtpEmail = async (req, res, next) => {
       otpExpire: {
         $gte: String(Date.now()),
       },
+      email: email,
     });
     console.log(user);
 

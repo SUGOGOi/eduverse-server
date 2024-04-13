@@ -8,8 +8,10 @@ import { sendEmail } from "../utils/sendEmail.js";
 export const registerUser = async (req, res, next) => {
   try {
     const { name, email, phno, school, password } = req.body;
+
     const file = req.file;
 
+    // console.log(name, email, phno, school, password, file);
     const fileUri = getDataUri(file);
 
     if (!name || !email || !password || !phno || !school || !file) {
@@ -44,6 +46,7 @@ export const registerUser = async (req, res, next) => {
       201
     );
   } catch (error) {
+    console.log(error);
     return next(new ErrorHandler("Registration Unsuccessfull", 500));
   }
 };
@@ -112,5 +115,30 @@ export const logoutUser = async (req, res, next) => {
       });
   } catch (error) {
     return next(new ErrorHandler("Logout Fail", 500));
+  }
+};
+
+export const changePassword = async (req, res, next) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+    const { email } = req.query;
+    if (!oldPassword || !newPassword) {
+      return next(new ErrorHandler("Please enter all the fields", 400));
+    }
+
+    const user = await User.findOne({ email, password: oldPassword }).select(
+      "password"
+    );
+    if (!user) {
+      return next(new ErrorHandler("Internal server error", 500));
+    }
+    user.password = newPassword;
+    await user.save();
+    res.status(201).json({
+      success: true,
+      message: `Password changed`,
+    });
+  } catch (error) {
+    return next(new ErrorHandler("Operation Fail", 500));
   }
 };
