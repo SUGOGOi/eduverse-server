@@ -12,17 +12,27 @@ const courseSchema = new mongoose.Schema(
     },
     description: {
       type: String,
-      required: [true, "enter course title"],
+      required: [true, "enter course description"],
     },
-    videos: [
+    poster: {
+      public_id: {
+        type: String,
+        required: true,
+      },
+      url: {
+        type: String,
+        required: true,
+      },
+    },
+    modules: [
       {
         title: {
           type: String,
-          required: [true, "enter video title"],
+          required: [true, "enter module title"],
         },
-        url: {
-          type: String,
-          required: [true, "enter video url"],
+        id: {
+          type: mongoose.Types.ObjectId,
+          ref: "module",
         },
       },
     ],

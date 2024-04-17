@@ -4,18 +4,26 @@ import { ErrorHandler } from "../utils/utilityClass.js";
 import { User } from "../models/userModel.js";
 import { sendToken } from "../utils/sendToken.js";
 import { sendEmail } from "../utils/sendEmail.js";
+import { OtpModel } from "../models/otpModel.js";
 
 export const registerUser = async (req, res, next) => {
   try {
     const { name, email, phno, school, password } = req.body;
 
     const file = req.file;
+    // console.log(file);
 
     // console.log(name, email, phno, school, password, file);
     const fileUri = getDataUri(file);
 
     if (!name || !email || !password || !phno || !school || !file) {
       return next(new ErrorHandler("Please enter all fields", 400));
+    }
+
+    let otp = await OtpModel.findOne({ email });
+
+    if (!otp) {
+      return next(new ErrorHandler("Please verify your email address!", 400));
     }
 
     let user = await User.findOne({ email });

@@ -1,4 +1,4 @@
-import ErrorHandler from "../utils/utilityClass.js";
+import { ErrorHandler } from "../utils/utilityClass.js";
 import { User } from "../models/userModel.js";
 
 export const isAdmin = async (req, res, next) => {

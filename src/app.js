@@ -10,6 +10,8 @@ import cors from "cors";
 //importing routes
 import otpRoutes from "./routes/otpRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import courseRoutes from "./routes/courseRoute.js";
+import moduleRoutes from "./routes/moduleRoutes.js";
 import { connectDB } from "./config/dbConfig.js";
 
 //<--------------------config file
@@ -47,6 +49,8 @@ connectDB();
 //<-------------------------------------USING ROUTES----------------------------------->
 app.use("/api/v1/otp", otpRoutes); //otp routes
 app.use("/api/v1/auth", authRoutes); //auth routes
+app.use("/api/v1/course", courseRoutes); //course routes
+app.use("/api/v1/module", moduleRoutes); //moduleroutes
 
 //<----------------static folder
 app.use("/uploads", express.static("uploads"));
