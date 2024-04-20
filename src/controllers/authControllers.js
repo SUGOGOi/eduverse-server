@@ -16,7 +16,7 @@ export const registerUser = async (req, res, next) => {
     // console.log(name, email, phno, school, password, file);
     const fileUri = getDataUri(file);
 
-    if (!name || !email || !password || !phno || !school || !file) {
+    if (!name || !email || !password || !phno || !school) {
       return next(new ErrorHandler("Please enter all fields", 400));
     }
 
@@ -53,8 +53,17 @@ export const registerUser = async (req, res, next) => {
       "Registered Successfully, Wait for approval by Admin.",
       201
     );
-  } catch (error) {
-    console.log(error);
+  } catch (e) {
+    // console.log(e);
+    if (e.error.message === "Request Timeout") {
+      return next(
+        new ErrorHandler("Request Timeout, Check your internet connection", 499)
+      );
+    } else if (e.error.errno === -3008) {
+      return next(
+        new ErrorHandler("uploading fail, Check your internet connection", 499)
+      );
+    }
     return next(new ErrorHandler("Registration Unsuccessfull", 500));
   }
 };

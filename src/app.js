@@ -2,7 +2,6 @@ import express from "express";
 import cloudinary from "cloudinary";
 import { config } from "dotenv";
 import morgan from "morgan";
-import bodyParser from "body-parser";
 import { erroMiddleware } from "./middlewares/error.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
@@ -12,6 +11,7 @@ import otpRoutes from "./routes/otpRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import courseRoutes from "./routes/courseRoute.js";
 import moduleRoutes from "./routes/moduleRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 import { connectDB } from "./config/dbConfig.js";
 
 //<--------------------config file
@@ -28,15 +28,20 @@ const app = express();
 //<--------additional middleware
 app.use(express.json());
 app.use(morgan("dev"));
-app.use(bodyParser.json());
 app.use(
-  bodyParser.urlencoded({
+  express.urlencoded({
     extended: true,
   })
 );
 app.use(cookieParser());
-app.use(cors());
-app.options("*", cors());
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+    methods: ["GET", "POST", "DELETE", "PUT"],
+  })
+);
+// app.options("*", cors());
 
 //<---------------test api
 app.get("/", (req, res) => {
@@ -51,6 +56,7 @@ app.use("/api/v1/otp", otpRoutes); //otp routes
 app.use("/api/v1/auth", authRoutes); //auth routes
 app.use("/api/v1/course", courseRoutes); //course routes
 app.use("/api/v1/module", moduleRoutes); //moduleroutes
+app.use("/api/v1/user", userRoutes); //moduleroutes
 
 //<----------------static folder
 app.use("/uploads", express.static("uploads"));

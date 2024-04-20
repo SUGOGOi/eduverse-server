@@ -69,3 +69,22 @@ export const addVideos = async (req, res, next) => {
     return next(new ErrorHandler("Error adding videos", 500));
   }
 };
+
+export const deleteVideo = async (req, res, next) => {
+  try {
+    // const id = req.params.id;
+    const { mid } = req.query;
+
+    if (!mid) {
+      return next(new ErrorHandler("no video  or module", 500));
+    }
+    const videos = Module.findById(mid).select("videos");
+    if (!videos) {
+      return next(new ErrorHandler("no module found", 404));
+    }
+
+    // for (let i = 0;i<videos.leng)
+  } catch (error) {
+    return next(new ErrorHandler("Error deleting videos", 500));
+  }
+};

@@ -1,6 +1,5 @@
 import mongoose, { Schema } from "mongoose";
 import validator from "validator";
-import jwt from "jsonwebtoken";
 
 const userSchema = new mongoose.Schema(
   {
@@ -35,11 +34,11 @@ const userSchema = new mongoose.Schema(
     paymentPhoto: {
       public_id: {
         type: String,
-        required: true,
+        // required: true,
       },
       url: {
         type: String,
-        required: true,
+        // required: true,
       },
     },
     isApproved: {
@@ -49,11 +48,5 @@ const userSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-userSchema.methods.getJWTToken = function () {
-  return jwt.sign({ _id: this._id }, `${process.env.JWT_SECRET}`, {
-    expiresIn: "10d",
-  });
-};
 
 export const User = mongoose.model("user", userSchema);
