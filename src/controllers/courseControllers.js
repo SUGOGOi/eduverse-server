@@ -54,12 +54,35 @@ export const getSearchCourse = async (req, res, next) => {
   }
 };
 
+export const getCourseById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    let course;
+    if (!id) {
+      return next(new ErrorHandler("Invalid Course Id", 404));
+    }
+
+    course = await Course.findById(id);
+    if (!course) {
+      return next(new ErrorHandler("No course available", 404));
+    }
+
+    res.status(200).json({
+      success: true,
+      course,
+    });
+  } catch (error) {
+    console.log(error);
+    return next(new ErrorHandler("Error fetching course", 500));
+  }
+};
+
 //<=============================CREATE=====================================>
 export const createCourse = async (req, res, next) => {
   try {
     const { subject, Class, description } = req.body;
     const file = req.file;
-    // console.log(file);
+    // console.log(subject, Class, description);
 
     const fileUri = getDataUri(file);
     const courseExist = await Course.findOne({ subject, class: Class });
@@ -86,9 +109,10 @@ export const createCourse = async (req, res, next) => {
     return res.status(201).json({
       success: true,
       course,
+      message: "Course created!",
     });
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return next(new ErrorHandler("Error creating courses ", 500));
   }
 };

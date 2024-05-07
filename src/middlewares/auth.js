@@ -30,12 +30,14 @@ export const isAdmin = async (req, res, next) => {
 export const isLogin = async (req, res, next) => {
   try {
     const { token } = req.cookies;
+    // console.log(token);
 
     if (!token) {
       return next(new ErrorHandler("Not Logged In", 401));
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // console.log("done");
 
     req.user = await User.findById(decoded._id);
 

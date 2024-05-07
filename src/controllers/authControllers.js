@@ -71,12 +71,14 @@ export const registerUser = async (req, res, next) => {
 export const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
+    console.log(email);
+    console.log(password);
 
     if (!email || !password) {
       return next(new ErrorHandler("Please enter your email/password", 400));
     }
 
-    const user = await User.findOne({ email, password }).select("name");
+    const user = await User.findOne({ email, password });
 
     if (!user) {
       return next(
