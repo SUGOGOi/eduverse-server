@@ -14,6 +14,10 @@ const courseSchema = new mongoose.Schema(
       type: String,
       required: [true, "enter course description"],
     },
+    school: {
+      type: String,
+      required: [true, "enter school"],
+    },
     poster: {
       public_id: {
         type: String,

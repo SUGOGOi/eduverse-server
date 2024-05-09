@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "please enter your mobile number"],
       unique: [true, "mobile number already exist"],
+      select: false,
     },
     email: {
       type: String,
@@ -20,12 +21,17 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ["admin", "user"],
-      default: "user",
+      enum: ["admin", "student", "teacher"],
+      default: "student",
+    },
+    class: {
+      type: String,
+      required: [true, "please enter your class"],
     },
     password: {
       type: String,
       requird: [true, "please enter your password"],
+      select: false,
     },
     school: {
       type: String,

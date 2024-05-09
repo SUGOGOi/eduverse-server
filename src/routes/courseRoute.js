@@ -1,15 +1,20 @@
 import express from "express";
 import {
-  createCourse,
+  createCourseByTeacher,
   getAllCourses,
   getCourseById,
 } from "../controllers/courseControllers.js";
-import { isAdmin, isLogin } from "../middlewares/auth.js";
+import { isAdminOrTeacher, isLogin } from "../middlewares/auth.js";
 import singleUpload from "../middlewares/multer.js";
 const app = express.Router();
 
 app.get("/all-courses", isLogin, getAllCourses);
-app.post("/create-course", isAdmin, singleUpload, createCourse);
+app.post(
+  "/create-course",
+  isAdminOrTeacher,
+  singleUpload,
+  createCourseByTeacher
+);
 app.get("/:id", isLogin, getCourseById);
 
 export default app;

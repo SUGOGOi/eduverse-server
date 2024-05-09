@@ -1,5 +1,5 @@
 import express from "express";
-import { isAdmin } from "../middlewares/auth.js";
+import { isAdminOrTeacher } from "../middlewares/auth.js";
 import {
   addVideos,
   createModule,
@@ -12,10 +12,10 @@ const app = express.Router();
 
 app.get("/all-videos", getAllVideos);
 
-app.post("/create-module", isAdmin, createModule);
-app.post("/add-video", isAdmin, addVideos);
+app.post("/create-module", isAdminOrTeacher, createModule);
+app.post("/add-video", isAdminOrTeacher, addVideos);
 
-app.delete("/delete-video", isAdmin, deleteVideo);
-app.delete("/delete-module", isAdmin, deleteModule);
+app.delete("/delete-video", isAdminOrTeacher, deleteVideo);
+app.delete("/delete-module", isAdminOrTeacher, deleteModule);
 
 export default app;
