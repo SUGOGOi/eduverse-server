@@ -79,14 +79,11 @@ export const getCourseById = async (req, res, next) => {
 };
 
 //<=============================CREATE=====================================>
-export const createCourseByTeacher = async (req, res, next) => {
+export const createCourse = async (req, res, next) => {
   try {
-    const { id } = req.query;
-    const { subject, Class, description } = req.body;
+    const { subject, Class, description, school } = req.body;
     const file = req.file;
     // console.log(subject, Class, description);
-
-    const user = await User.findById(id).select("school");
 
     const fileUri = getDataUri(file);
     const courseExist = await Course.findOne({ subject, class: Class });
@@ -104,7 +101,7 @@ export const createCourseByTeacher = async (req, res, next) => {
       class: Class,
       subject,
       description,
-      school: user.school,
+      school,
       poster: {
         public_id: myCloud.public_id,
         url: myCloud.url,

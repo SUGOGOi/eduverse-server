@@ -32,7 +32,6 @@ const courseSchema = new mongoose.Schema(
       {
         title: {
           type: String,
-          required: [true, "enter module title"],
         },
         id: {
           type: mongoose.Types.ObjectId,

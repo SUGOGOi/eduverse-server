@@ -6,6 +6,7 @@ export const createModule = async (req, res, next) => {
   try {
     const { cid } = req.query;
     const { name } = req.body;
+    console.log(cid);
 
     let course = await Course.findById(cid);
 
@@ -13,7 +14,7 @@ export const createModule = async (req, res, next) => {
       return next(new ErrorHandler("No course found", 404));
     }
 
-    let module = await Module.findOne({ name });
+    let module = await Module.findOne({ course: cid, name });
     if (module) {
       return next(new ErrorHandler("chapter already exist", 400));
     }
@@ -37,6 +38,7 @@ export const createModule = async (req, res, next) => {
       // modules,
     });
   } catch (error) {
+    console.log(error);
     return next(new ErrorHandler("Error createing module", 500));
   }
 };

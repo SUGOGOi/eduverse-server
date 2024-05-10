@@ -9,7 +9,6 @@ const moduleSchema = new mongoose.Schema(
     name: {
       type: String,
       required: [true, "enter module name"],
-      unique: true,
     },
 
     videos: [
