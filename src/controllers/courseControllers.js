@@ -68,9 +68,17 @@ export const getCourseById = async (req, res, next) => {
       return next(new ErrorHandler("No course available", 404));
     }
 
+    const person = await Course.findById(id)
+      .populate("creatorID")
+      .select("creatorID");
+    const { _doc } = { ...course };
+
+    const newCourse = { ..._doc, creator: person.creatorID.name };
+    console.log(newCourse);
+
     res.status(200).json({
       success: true,
-      course,
+      course: newCourse,
     });
   } catch (error) {
     console.log(error);
@@ -82,6 +90,7 @@ export const getCourseById = async (req, res, next) => {
 export const createCourse = async (req, res, next) => {
   try {
     const { subject, Class, description, school } = req.body;
+    const { id } = req.query;
     const file = req.file;
     // console.log(subject, Class, description);
 
@@ -106,6 +115,7 @@ export const createCourse = async (req, res, next) => {
         public_id: myCloud.public_id,
         url: myCloud.url,
       },
+      creatorID: id,
     });
 
     return res.status(201).json({
@@ -114,7 +124,7 @@ export const createCourse = async (req, res, next) => {
       message: "Course created!",
     });
   } catch (error) {
-    // console.log(error);
+    console.log(error);
     return next(new ErrorHandler("Error creating courses ", 500));
   }
 };

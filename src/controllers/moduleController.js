@@ -9,19 +9,31 @@ export const createModule = async (req, res, next) => {
     console.log(cid);
 
     let course = await Course.findById(cid);
+    const subject = course.subject;
+    const Class = course.class;
+    console.log(subject);
+    console.log(Class);
 
     if (!course) {
       return next(new ErrorHandler("No course found", 404));
     }
 
-    let module = await Module.findOne({ course: cid, name });
-    if (module) {
+    let module = await Module.findOne({
+      name,
+      class: Class,
+      subject: subject,
+    });
+
+    console.log(module);
+    if (module != null) {
       return next(new ErrorHandler("chapter already exist", 400));
     }
 
     module = await Module.create({
       course: course._id,
       name,
+      class: Class,
+      subject,
     });
 
     course.modules.push({
@@ -39,7 +51,7 @@ export const createModule = async (req, res, next) => {
     });
   } catch (error) {
     console.log(error);
-    return next(new ErrorHandler("Error createing module", 500));
+    return next(new ErrorHandler("Error creating chapter", 500));
   }
 };
 

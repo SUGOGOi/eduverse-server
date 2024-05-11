@@ -10,6 +10,14 @@ const moduleSchema = new mongoose.Schema(
       type: String,
       required: [true, "enter module name"],
     },
+    class: {
+      type: String,
+      required: [true, "enter class"],
+    },
+    subject: {
+      type: String,
+      required: [true, "enter subject"],
+    },
 
     videos: [
       {

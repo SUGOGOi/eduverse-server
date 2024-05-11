@@ -8,13 +8,13 @@ import { OtpModel } from "../models/otpModel.js";
 
 export const registerUser = async (req, res, next) => {
   try {
-    const { name, email, phno, school, password } = req.body;
+    const { name, email, phno, school, password, Class, role } = req.body;
+    let mycloud = undefined;
 
-    const file = req.file;
-    // console.log(file);
-
-    // console.log(name, email, phno, school, password, file);
-    const fileUri = getDataUri(file);
+    if (role === "student") {
+      const file = req.file;
+      const fileUri = getDataUri(file);
+    }
 
     if (!name || !email || !password || !phno || !school) {
       return next(new ErrorHandler("Please enter all fields", 400));
@@ -33,19 +33,33 @@ export const registerUser = async (req, res, next) => {
     }
 
     //upload file on cloudinary
-    const mycloud = await cloudinary.v2.uploader.upload(fileUri.content);
+    if (role === "student") {
+      mycloud = await cloudinary.v2.uploader.upload(fileUri.content);
 
-    user = await User.create({
-      name,
-      email,
-      password,
-      phno,
-      school,
-      paymentPhoto: {
-        public_id: mycloud.public_id,
-        url: mycloud.url,
-      },
-    });
+      user = await User.create({
+        name,
+        email,
+        password,
+        phno,
+        school,
+        class: Class, //for student
+        role,
+        paymentPhoto: {
+          public_id: mycloud.public_id,
+          url: mycloud.url,
+        },
+      });
+    } else {
+      user = await User.create({
+        name,
+        email,
+        password,
+        phno,
+        school,
+        classes: Class, //for teacher
+        role,
+      });
+    }
 
     sendToken(
       res,
@@ -54,16 +68,7 @@ export const registerUser = async (req, res, next) => {
       201
     );
   } catch (e) {
-    // console.log(e);
-    if (e.error.message === "Request Timeout") {
-      return next(
-        new ErrorHandler("Request Timeout, Check your internet connection", 499)
-      );
-    } else if (e.error.errno === -3008) {
-      return next(
-        new ErrorHandler("uploading fail, Check your internet connection", 499)
-      );
-    }
+    console.log(e);
     return next(new ErrorHandler("Registration Unsuccessfull", 500));
   }
 };

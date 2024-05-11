@@ -24,9 +24,15 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "student", "teacher"],
       default: "student",
     },
+    classes: [
+      //for teacher
+      {
+        type: String,
+      },
+    ],
     class: {
+      //for student
       type: String,
-      required: [true, "please enter your class"],
     },
     password: {
       type: String,
@@ -40,21 +46,17 @@ const userSchema = new mongoose.Schema(
     paymentPhoto: {
       public_id: {
         type: String,
-        // required: true,
       },
       url: {
         type: String,
-        // required: true,
       },
     },
     avatar: {
       public_id: {
         type: String,
-        // required: true,
       },
       url: {
         type: String,
-        // required: true,
       },
     },
     isApproved: {
