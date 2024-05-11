@@ -1,6 +1,8 @@
 import { Course } from "../models/courseModel.js";
 import { Module } from "../models/moduleModel.js";
+import getDataUri from "../utils/dataUri.js";
 import { ErrorHandler } from "../utils/utilityClass.js";
+import cloudinary from "cloudinary";
 
 export const createModule = async (req, res, next) => {
   try {
@@ -11,8 +13,6 @@ export const createModule = async (req, res, next) => {
     let course = await Course.findById(cid);
     const subject = course.subject;
     const Class = course.class;
-    console.log(subject);
-    console.log(Class);
 
     if (!course) {
       return next(new ErrorHandler("No course found", 404));
@@ -20,8 +20,7 @@ export const createModule = async (req, res, next) => {
 
     let module = await Module.findOne({
       name,
-      class: Class,
-      subject: subject,
+      course: cid,
     });
 
     console.log(module);
@@ -55,6 +54,7 @@ export const createModule = async (req, res, next) => {
   }
 };
 
+//=====================UPLOAD LINK/PDF=========================================//
 export const addVideos = async (req, res, next) => {
   try {
     const { link, vname } = req.body;
@@ -65,13 +65,15 @@ export const addVideos = async (req, res, next) => {
       return next(new ErrorHandler("module not found", 404));
     }
 
-    if (module.videos.vname === vname) {
-      return next(new ErrorHandler("video name already exist", 404));
-    }
+    // if (module.materials.video.vname === vname) {
+    //   return next(new ErrorHandler("video name already exist", 404));
+    // }
 
-    module.videos.push({
-      vname,
-      link,
+    module.materials.push({
+      video: {
+        vname,
+        link,
+      },
     });
 
     await module.save();
@@ -82,6 +84,48 @@ export const addVideos = async (req, res, next) => {
     });
   } catch (error) {
     return next(new ErrorHandler("Error adding videos", 500));
+  }
+};
+
+export const addPdf = async (req, res, next) => {
+  try {
+    const { pname } = req.body;
+    const { mid } = req.query;
+    const file = req.file;
+    console.log(file);
+    console.log(pname);
+
+    const module = await Module.findById(mid);
+
+    if (!module) {
+      return next(new ErrorHandler("module not found", 404));
+    }
+
+    // if (module.materials.pdf.pname === pname) {
+    //   return next(new ErrorHandler("name already exist", 404));
+    // }
+
+    const fileUri = getDataUri(file);
+
+    const myCloud = await cloudinary.v2.uploader.upload(fileUri.content);
+
+    module.materials.push({
+      pdf: {
+        pname: pname,
+        public_id: myCloud.public_id,
+        url: myCloud.url,
+      },
+    });
+
+    await module.save();
+    return res.status(200).json({
+      success: true,
+      module,
+      message: "pdf added successfuly",
+    });
+  } catch (error) {
+    console.log(error);
+    return next(new ErrorHandler("Error adding pdf", 500));
   }
 };
 
@@ -153,21 +197,21 @@ export const deleteModule = async (req, res, next) => {
   }
 };
 
-export const getAllVideos = async (req, res, next) => {
+export const getAllMaterials = async (req, res, next) => {
   try {
     const { mid } = req.query;
     if (!mid) {
       return next(new ErrorHandler("no module", 404));
     }
-    const module = await Module.findById(mid);
+    const module = await Module.findById(mid).select("materials");
     // console.log(module);
 
     res.status(200).json({
       success: true,
-      videos: module.videos,
+      materials: module.materials,
     });
   } catch (error) {
     // console.log(error);
-    return next(new ErrorHandler("Error loading videos", 500));
+    return next(new ErrorHandler("Error loading materials", 500));
   }
 };

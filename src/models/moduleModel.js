@@ -19,15 +19,26 @@ const moduleSchema = new mongoose.Schema(
       required: [true, "enter subject"],
     },
 
-    videos: [
+    materials: [
       {
-        vname: {
-          type: String,
-          required: [true, "enter video title"],
+        video: {
+          vname: {
+            type: String,
+          },
+          link: {
+            type: String,
+          },
         },
-        link: {
-          type: String,
-          required: [true, "enter video link"],
+        pdf: {
+          pname: {
+            type: String,
+          },
+          public_id: {
+            type: String,
+          },
+          url: {
+            type: String,
+          },
         },
       },
     ],
