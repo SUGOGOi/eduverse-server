@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createCourse,
+  deleteCourse,
   getAllCourses,
   getCourseById,
 } from "../controllers/courseControllers.js";
@@ -11,5 +12,6 @@ const app = express.Router();
 app.get("/all-courses", isLogin, getAllCourses);
 app.post("/create-course", isAdminOrTeacher, singleUpload, createCourse);
 app.get("/:id", isLogin, getCourseById);
+app.delete("/:cid", isAdminOrTeacher, deleteCourse);
 
 export default app;

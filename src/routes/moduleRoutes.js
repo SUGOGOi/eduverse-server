@@ -5,6 +5,7 @@ import {
   addVideos,
   createModule,
   deleteModule,
+  deletePdf,
   deleteVideo,
   getAllMaterials,
 } from "../controllers/moduleController.js";
@@ -19,6 +20,7 @@ app.post("/add-video", isAdminOrTeacher, addVideos);
 app.post("/add-pdf", isAdminOrTeacher, singleUpload, addPdf);
 
 app.delete("/delete-video", isAdminOrTeacher, deleteVideo);
+app.delete("/delete-pdf", isAdminOrTeacher, deletePdf);
 app.delete("/delete-module", isAdminOrTeacher, deleteModule);
 
 export default app;

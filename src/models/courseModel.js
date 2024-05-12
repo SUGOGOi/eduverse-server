@@ -19,14 +19,8 @@ const courseSchema = new mongoose.Schema(
       required: [true, "enter school"],
     },
     poster: {
-      public_id: {
-        type: String,
-        required: true,
-      },
-      url: {
-        type: String,
-        required: true,
-      },
+      type: String,
+      required: true,
     },
     modules: [
       {

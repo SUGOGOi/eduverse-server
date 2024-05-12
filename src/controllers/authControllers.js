@@ -5,6 +5,7 @@ import { User } from "../models/userModel.js";
 import { sendToken } from "../utils/sendToken.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { OtpModel } from "../models/otpModel.js";
+import { rm } from "fs";
 
 export const registerUser = async (req, res, next) => {
   try {

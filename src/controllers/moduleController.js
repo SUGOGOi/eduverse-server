@@ -3,6 +3,7 @@ import { Module } from "../models/moduleModel.js";
 import getDataUri from "../utils/dataUri.js";
 import { ErrorHandler } from "../utils/utilityClass.js";
 import cloudinary from "cloudinary";
+import { rm } from "fs";
 
 export const createModule = async (req, res, next) => {
   try {
@@ -60,6 +61,10 @@ export const addVideos = async (req, res, next) => {
     const { link, vname } = req.body;
     const { mid } = req.query;
 
+    if (!link || !vname) {
+      return next(new ErrorHandler("Please enter all fields", 400));
+    }
+
     const module = await Module.findById(mid);
     if (!module) {
       return next(new ErrorHandler("module not found", 404));
@@ -70,10 +75,8 @@ export const addVideos = async (req, res, next) => {
     // }
 
     module.materials.push({
-      video: {
-        vname,
-        link,
-      },
+      vname,
+      link,
     });
 
     await module.save();
@@ -92,29 +95,26 @@ export const addPdf = async (req, res, next) => {
     const { pname } = req.body;
     const { mid } = req.query;
     const file = req.file;
-    console.log(file);
-    console.log(pname);
+
+    if (!pname || !mid) {
+      rm(file.path, () => {
+        console.log(`${file.originalname} deleted`);
+      });
+      return next(new ErrorHandler("Please enter all fields", 400));
+    }
 
     const module = await Module.findById(mid);
 
     if (!module) {
+      rm(file.path, () => {
+        console.log(`${file.originalname} deleted`);
+      });
       return next(new ErrorHandler("module not found", 404));
     }
 
-    // if (module.materials.pdf.pname === pname) {
-    //   return next(new ErrorHandler("name already exist", 404));
-    // }
-
-    const fileUri = getDataUri(file);
-
-    const myCloud = await cloudinary.v2.uploader.upload(fileUri.content);
-
     module.materials.push({
-      pdf: {
-        pname: pname,
-        public_id: myCloud.public_id,
-        url: myCloud.url,
-      },
+      pname: pname,
+      url: file.path,
     });
 
     await module.save();
@@ -129,22 +129,26 @@ export const addPdf = async (req, res, next) => {
   }
 };
 
+//===============================DELETE VIDEO/PDF=============================//
 export const deleteVideo = async (req, res, next) => {
   try {
-    // const id = req.params.id;
     const { mid, vid } = req.query;
 
     if (!mid) {
       return next(new ErrorHandler("no module id", 500));
     }
-    const module = await Module.findById(mid).select("videos");
+    const module = await Module.findById(mid).select("materials");
     // console.log(module.videos);
     if (!module) {
       return next(new ErrorHandler("no module found", 404));
     }
 
-    module.videos = module.videos.filter((item) => {
-      if (item._id.toString() !== vid.toString()) return item;
+    module.materials = module.materials.filter((item) => {
+      if (item.vname) {
+        if (item._id.toString() != vid.toString()) return item;
+      } else {
+        return item;
+      }
     });
 
     await module.save();
@@ -153,14 +157,48 @@ export const deleteVideo = async (req, res, next) => {
       success: true,
       message: "Video deleted",
     });
-
-    // for (let i = 0;i<videos.leng)
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     return next(new ErrorHandler("Error deleting videos", 500));
   }
 };
 
+export const deletePdf = async (req, res, next) => {
+  try {
+    const { mid, pid } = req.query;
+    if (!mid) {
+      return next(new ErrorHandler("no module id", 500));
+    }
+    const module = await Module.findById(mid).select("materials");
+    // console.log(module.videos);
+    if (!module) {
+      return next(new ErrorHandler("no module found", 404));
+    }
+    module.materials = module.materials.filter((item) => {
+      if (item.pname) {
+        if (item._id.toString() != pid.toString()) return item;
+        if (item._id.toString() === pid.toString()) {
+          rm(item.url, () => {
+            console.log(`${item.pname}'s poster deleted`);
+          });
+        }
+      } else {
+        return item;
+      }
+    });
+
+    await module.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "pdf  deleted",
+    });
+  } catch (error) {
+    return next(new ErrorHandler("Error deleting videos", 500));
+  }
+};
+
+//=========================DELETE CHAPTER/MODULE================================//
 export const deleteModule = async (req, res, next) => {
   try {
     const { cid, mid } = req.query;
@@ -180,6 +218,14 @@ export const deleteModule = async (req, res, next) => {
 
     course.modules = course.modules.filter((item) => {
       if (item._id.toString() !== mid.toString()) return item;
+    });
+
+    module.materials.forEach((item) => {
+      if (item.pname) {
+        rm(item.url, () => {
+          console.log(`${item.pname}'s poster deleted`);
+        });
+      }
     });
 
     await course.save();

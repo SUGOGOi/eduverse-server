@@ -21,24 +21,17 @@ const moduleSchema = new mongoose.Schema(
 
     materials: [
       {
-        video: {
-          vname: {
-            type: String,
-          },
-          link: {
-            type: String,
-          },
+        vname: {
+          type: String,
         },
-        pdf: {
-          pname: {
-            type: String,
-          },
-          public_id: {
-            type: String,
-          },
-          url: {
-            type: String,
-          },
+        link: {
+          type: String,
+        },
+        pname: {
+          type: String,
+        },
+        url: {
+          type: String,
         },
       },
     ],
