@@ -6,7 +6,7 @@ import {
   logoutUser,
   registerUser,
 } from "../controllers/authControllers.js";
-import singleUpload from "../middlewares/multer.js";
+import { singleUpload } from "../middlewares/multer.js";
 
 const app = express.Router();
 

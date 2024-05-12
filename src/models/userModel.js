@@ -44,12 +44,7 @@ const userSchema = new mongoose.Schema(
       requird: [true, "please enter your school"],
     },
     paymentPhoto: {
-      public_id: {
-        type: String,
-      },
-      url: {
-        type: String,
-      },
+      type: String,
     },
     avatar: {
       public_id: {

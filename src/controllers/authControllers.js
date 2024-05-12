@@ -9,33 +9,41 @@ import { OtpModel } from "../models/otpModel.js";
 export const registerUser = async (req, res, next) => {
   try {
     const { name, email, phno, school, password, Class, role } = req.body;
-    let mycloud = undefined;
+    let file;
 
     if (role === "student") {
-      const file = req.file;
-      const fileUri = getDataUri(file);
+      file = req.file;
+      console.log(file);
+      if (!file) return next(new ErrorHandler("Upload payment proof", 400));
     }
 
     if (!name || !email || !password || !phno || !school) {
+      rm(file.path, () => {
+        console.log(`${file.originalname} deleted`);
+      });
       return next(new ErrorHandler("Please enter all fields", 400));
     }
 
     let otp = await OtpModel.findOne({ email });
 
     if (!otp) {
+      rm(file.path, () => {
+        console.log(`${file.originalname} deleted`);
+      });
       return next(new ErrorHandler("Please verify your email address!", 400));
     }
 
     let user = await User.findOne({ email });
 
     if (user) {
+      rm(file.path, () => {
+        console.log(`${file.originalname} deleted`);
+      });
       return next(new ErrorHandler("User already exist!", 409));
     }
 
     //upload file on cloudinary
     if (role === "student") {
-      mycloud = await cloudinary.v2.uploader.upload(fileUri.content);
-
       user = await User.create({
         name,
         email,
@@ -44,10 +52,7 @@ export const registerUser = async (req, res, next) => {
         school,
         class: Class, //for student
         role,
-        paymentPhoto: {
-          public_id: mycloud.public_id,
-          url: mycloud.url,
-        },
+        paymentPhoto: file.path,
       });
     } else {
       user = await User.create({
