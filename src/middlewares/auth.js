@@ -16,7 +16,6 @@ export const isAdminOrTeacher = async (req, res, next) => {
     }
 
     if (user.role != "admin" && user.role != "teacher") {
-      console.log("mmm");
       return next(
         new ErrorHandler(
           "Your are not authorized to access these resources",

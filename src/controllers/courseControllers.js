@@ -8,46 +8,33 @@ import { Module } from "../models/moduleModel.js";
 
 export const getAllCourses = async (req, res, next) => {
   try {
-    const courses = await Course.find({});
+    const user = await User.findById(req.user._id);
+    let courses = [];
+    console.log(user);
+    if (user.role === "student") {
+      if (user.isApproved === true) {
+        courses = await Course.find({
+          school: user.school,
+          class: user.class,
+        });
+      } else {
+        return next(new ErrorHandler("Wait for admin approval", 404));
+      }
+    } else if (user.role === "teacher") {
+      if (user.isApproved === true) {
+        courses = await Course.find({ creatorID: user._id });
+      } else {
+        return next(new ErrorHandler("Wait for admin approval", 404));
+      }
+    } else {
+      courses = await Course.find({});
+    }
+    console.log(courses);
     if (!courses) {
       return next(new ErrorHandler("No course available", 404));
     }
 
     return res.status(200).json({
-      success: true,
-      courses,
-    });
-  } catch (error) {
-    console.log(error);
-    return next(new ErrorHandler("Error fetching courses ", 500));
-  }
-};
-
-export const getSearchCourse = async (req, res, next) => {
-  try {
-    const { subject, Class } = req.query;
-    let courses;
-    if (!Class) {
-      courses = await Course.find({ subject });
-      if (!courses) {
-        return next(new ErrorHandler("No course available", 404));
-      }
-    }
-
-    if (!subject) {
-      courses = await Course.find({ class: Class });
-      if (!courses) {
-        return next(new ErrorHandler("No course available", 404));
-      }
-    }
-
-    courses = await Course.findOne({ subject, class: Class });
-
-    if (!courses) {
-      return next(new ErrorHandler("No course available", 404));
-    }
-
-    res.status(200).json({
       success: true,
       courses,
     });
