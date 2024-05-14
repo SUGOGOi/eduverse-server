@@ -34,6 +34,10 @@ const userSchema = new mongoose.Schema(
       //for student
       type: String,
     },
+    subject: {
+      type: String,
+      //for teacher to create only course for this subject
+    },
     password: {
       type: String,
       requird: [true, "please enter your password"],

@@ -3,28 +3,29 @@ import validator from "validator";
 import { OtpModel } from "../models/otpModel.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { ErrorHandler } from "../utils/utilityClass.js";
+import { Contact } from "../models/contactModel.js";
 
 export const sendOtpEmail = async (req, res, next) => {
   try {
     const { email } = req.body;
-    console.log(email);
+    // console.log(email);
     if (!email) {
       return next(new ErrorHandler("Please provide an email", 400));
     }
     const validate = validator.isEmail(email);
-    console.log(validate);
+    // console.log(validate);
 
     if (!validate) {
       return next(new ErrorHandler("Please provide a valid email", 400));
     }
     const otp = String(Math.floor(1000 + Math.random() * 8000));
-    console.log(otp);
+    // console.log(otp);
 
     const expire = String(Date.now() + 15 * 60 * 1000);
-    console.log(expire);
+    // console.log(expire);
 
     let otpUser = await OtpModel.findOne({ email });
-    console.log(otpUser);
+    // console.log(otpUser);
 
     if (otpUser != null) {
       otpUser.otpSend = otp;
@@ -58,8 +59,6 @@ export const verifyOtpEmail = async (req, res, next) => {
   try {
     const { otp } = req.body;
     const { email } = req.query;
-    console.log(email);
-    console.log(otp);
     if (!otp) {
       return next(new ErrorHandler("please enter otp ", 400));
     }
@@ -70,7 +69,7 @@ export const verifyOtpEmail = async (req, res, next) => {
       },
       email: email,
     });
-    console.log(user);
+    // console.log(user);
 
     if (!user) {
       return next(new ErrorHandler("Invalid otp or otp expired ", 400));
@@ -86,5 +85,56 @@ export const verifyOtpEmail = async (req, res, next) => {
   } catch (error) {
     console.log(error);
     return next(new ErrorHandler("Error verifying otp ", 500));
+  }
+};
+
+//======================CONTACT INFO=============================//
+
+export const contactUs = async (req, res, next) => {
+  try {
+    const { name, email, message } = req.body;
+
+    if (!name || !email || !message) {
+      return next(new ErrorHandler("Enter all fileds", 400));
+    }
+
+    const validate = validator.isEmail(email);
+
+    if (!validate) {
+      return next(new ErrorHandler("Please provide a valid email", 400));
+    }
+
+    const msg = await Contact.findOne({ email });
+
+    if (msg) {
+      msg.message = message;
+      return res.status(200).json({
+        success: true,
+        message: "Message Updated",
+      });
+    }
+    await Contact.create({
+      userName: name,
+      email,
+      message,
+    });
+    return res.status(200).json({
+      success: true,
+      message: "Message sent",
+    });
+  } catch (error) {
+    return next(new ErrorHandler("Error sending Message ", 500));
+  }
+};
+
+export const allContactMessage = async (req, res, next) => {
+  try {
+    const messages = await Contact.find({});
+    return res.status(201).json({
+      success: true,
+      messages,
+    });
+  } catch (error) {
+    return next(new ErrorHandler("Error fetching message ", 500));
   }
 };

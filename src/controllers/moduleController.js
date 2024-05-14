@@ -9,7 +9,7 @@ export const createModule = async (req, res, next) => {
   try {
     const { cid } = req.query;
     const { name } = req.body;
-    console.log(cid);
+    // console.log(cid);
 
     let course = await Course.findById(cid);
     const subject = course.subject;
@@ -24,7 +24,7 @@ export const createModule = async (req, res, next) => {
       course: cid,
     });
 
-    console.log(module);
+    // console.log(module);
     if (module != null) {
       return next(new ErrorHandler("chapter already exist", 400));
     }

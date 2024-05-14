@@ -9,16 +9,17 @@ import { rm } from "fs";
 
 export const registerUser = async (req, res, next) => {
   try {
-    const { name, email, phno, school, password, Class, role } = req.body;
+    const { name, email, phno, school, password, Class, role, subject } =
+      req.body;
     let file;
 
     if (role === "student") {
       file = req.file;
-      console.log(file);
+      // console.log(file);
       if (!file) return next(new ErrorHandler("Upload payment proof", 400));
     }
 
-    if (!name || !email || !password || !phno || !school) {
+    if (!name || !email || !password || !phno || !school || !subject) {
       rm(file.path, () => {
         console.log(`${file.originalname} deleted`);
       });
@@ -43,7 +44,6 @@ export const registerUser = async (req, res, next) => {
       return next(new ErrorHandler("User already exist!", 409));
     }
 
-    //upload file on cloudinary
     if (role === "student") {
       user = await User.create({
         name,
@@ -64,6 +64,7 @@ export const registerUser = async (req, res, next) => {
         school,
         classes: Class, //for teacher
         role,
+        subject,
       });
     }
 
@@ -74,7 +75,7 @@ export const registerUser = async (req, res, next) => {
       201
     );
   } catch (e) {
-    console.log(e);
+    // console.log(e);
     return next(new ErrorHandler("Registration Unsuccessfull", 500));
   }
 };
@@ -82,8 +83,6 @@ export const registerUser = async (req, res, next) => {
 export const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    console.log(email);
-    console.log(password);
 
     if (!email || !password) {
       return next(new ErrorHandler("Please enter your email/password", 400));

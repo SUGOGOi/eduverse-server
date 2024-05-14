@@ -10,7 +10,7 @@ export const getAllCourses = async (req, res, next) => {
   try {
     const user = await User.findById(req.user._id);
     let courses = [];
-    console.log(user);
+    // console.log(user);
     if (user.role === "student") {
       if (user.isApproved === true) {
         courses = await Course.find({
@@ -29,7 +29,7 @@ export const getAllCourses = async (req, res, next) => {
     } else {
       courses = await Course.find({});
     }
-    console.log(courses);
+    // console.log(courses);
     if (!courses) {
       return next(new ErrorHandler("No course available", 404));
     }
@@ -63,7 +63,7 @@ export const getCourseById = async (req, res, next) => {
     const { _doc } = { ...course };
 
     const newCourse = { ..._doc, creator: person.creatorID.name };
-    console.log(newCourse);
+    // console.log(newCourse);
 
     res.status(200).json({
       success: true,

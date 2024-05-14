@@ -65,5 +65,7 @@ app.use("/uploads", express.static("uploads"));
 app.use(erroMiddleware);
 
 app.listen(port, () => {
-  console.log(`server wotking ${port}`);
+  console.log(
+    `<============================SERVER WORKING ${port}====================================>`
+  );
 });
