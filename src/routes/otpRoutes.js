@@ -5,6 +5,7 @@ import {
   sendOtpEmail,
   verifyOtpEmail,
 } from "../controllers/otpControllers.js";
+import { isAdminOrTeacher } from "../middlewares/auth.js";
 
 const app = express.Router();
 
@@ -14,6 +15,6 @@ app.post("/verify-otp", verifyOtpEmail);
 
 //=================Contact Routes=======================//
 app.post("/conact-us", contactUs);
-app.get("/all-conacts", allContactMessage);
+app.get("/all-conacts", isAdminOrTeacher, allContactMessage);
 
 export default app;

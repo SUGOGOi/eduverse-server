@@ -79,6 +79,7 @@ export const getCourseById = async (req, res, next) => {
 export const createCourse = async (req, res, next) => {
   try {
     const { subject, Class, description, school } = req.body;
+    console.log(subject);
     const { id } = req.query;
     const file = req.file;
 

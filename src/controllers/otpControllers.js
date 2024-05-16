@@ -19,7 +19,7 @@ export const sendOtpEmail = async (req, res, next) => {
       return next(new ErrorHandler("Please provide a valid email", 400));
     }
     const otp = String(Math.floor(1000 + Math.random() * 8000));
-    // console.log(otp);
+    console.log(otp);
 
     const expire = String(Date.now() + 15 * 60 * 1000);
     // console.log(expire);
@@ -130,6 +130,9 @@ export const contactUs = async (req, res, next) => {
 export const allContactMessage = async (req, res, next) => {
   try {
     const messages = await Contact.find({});
+    if (messages.length === 0) {
+      return next(new ErrorHandler("no contact messages found", 404));
+    }
     return res.status(201).json({
       success: true,
       messages,
