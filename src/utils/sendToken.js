@@ -12,7 +12,7 @@ export const sendToken = (res, user, message, statusCode = 200) => {
     expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
     httpOnly: true,
     // secure: true,
-    sameSite: "none",
+    same_site: "none",
   };
   return res.status(statusCode).cookie("token", token, options).json({
     success: true,
