@@ -13,7 +13,7 @@ export const sendToken = (res, user, message, statusCode = 200) => {
     httpOnly: true,
     secure: true,
     sameSite: None,
-    priority: High,
+    // priority: High,
     // domain: "eduverse-client.vercel.app",
   };
   return res.status(statusCode).cookie("token", token, options).json({
