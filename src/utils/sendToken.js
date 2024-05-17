@@ -11,8 +11,8 @@ export const sendToken = (res, user, message, statusCode = 200) => {
   const options = {
     expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
     httpOnly: true,
-    // secure: true,
-    sameSite: "None",
+    secure: true,
+    // sameSite: "None",
     // priority: High,
     // domain: "eduverse-client.vercel.app",
   };
