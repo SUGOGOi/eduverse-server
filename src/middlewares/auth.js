@@ -35,7 +35,7 @@ export const isAdminOrTeacher = async (req, res, next) => {
 export const isLogin = async (req, res, next) => {
   try {
     const { token } = req.cookies;
-    // console.log(token);
+    console.log(token);
 
     if (!token) {
       return next(new ErrorHandler("Not Logged In", 401));
