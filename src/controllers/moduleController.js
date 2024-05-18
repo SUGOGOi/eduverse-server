@@ -1,8 +1,6 @@
 import { Course } from "../models/courseModel.js";
 import { Module } from "../models/moduleModel.js";
-import getDataUri from "../utils/dataUri.js";
 import { ErrorHandler } from "../utils/utilityClass.js";
-import cloudinary from "cloudinary";
 import { rm } from "fs";
 
 export const createModule = async (req, res, next) => {

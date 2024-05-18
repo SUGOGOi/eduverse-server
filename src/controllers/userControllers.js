@@ -80,3 +80,40 @@ export const getSpecificUsers = async (req, res, next) => {
     return next(new ErrorHandler("users not found", 404));
   }
 };
+
+//=============ADD CLASS===================//
+export const addClassTeacher = async (req, res, next) => {
+  try {
+    const { id } = req.query;
+    const { Class } = req.body;
+    if (!Class) {
+      return next(new ErrorHandler("Enter class", 400));
+    }
+
+    if (!id) {
+      return next(new ErrorHandler("Invalid id", 400));
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+      return next(new ErrorHandler("User not found", 404));
+    }
+
+    for (let i = 0; i < user.classes.length; i++) {
+      if (user.classes[i] === Class.toString()) {
+        return next(new ErrorHandler("Class already exist", 400));
+      }
+    }
+
+    user.classes.push(Class.toString());
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Class added",
+    });
+  } catch (error) {
+    return next(new ErrorHandler("Error adding class", 500));
+  }
+};
