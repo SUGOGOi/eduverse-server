@@ -12,15 +12,17 @@ export const sendToken = (res, user, message, statusCode = 200) => {
     secure: true, // Set to true if using HTTPS
     sameSite: "strict", // Helps prevent CSRF attacks
   };
-  return res
-    .status(statusCode)
-    .cookie("token", token, options)
-    .cookie("role", user.role, options)
-    .json({
-      success: true,
-      message,
-      user,
-      token,
-      role: user.role,
-    });
+  return (
+    res
+      .status(statusCode)
+      // .cookie("token", token, options)
+      // .cookie("role", user.role, options)
+      .json({
+        success: true,
+        message,
+        user,
+        token,
+        role: user.role,
+      })
+  );
 };
