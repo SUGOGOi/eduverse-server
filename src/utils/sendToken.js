@@ -20,5 +20,7 @@ export const sendToken = (res, user, message, statusCode = 200) => {
       success: true,
       message,
       user,
+      token,
+      role: user.role,
     });
 };
