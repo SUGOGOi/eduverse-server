@@ -130,10 +130,22 @@ export const forgetPassword = async (req, res, next) => {
 
 export const logoutUser = async (req, res, next) => {
   try {
-    return res.status(200).cookie("token", null).cookie("role", null).json({
-      success: true,
-      message: "Logout Successfully",
-    });
+    return res
+      .status(200)
+      .cookie("token", null, {
+        expires: new Date(Date.now()),
+        httpOnly: true,
+        secure: true,
+      })
+      .cookie("role", null, {
+        expires: new Date(Date.now()),
+        httpOnly: true,
+        secure: true,
+      })
+      .json({
+        success: true,
+        message: "Logout Successfully",
+      });
   } catch (error) {
     return next(new ErrorHandler("Logout Fail", 500));
   }

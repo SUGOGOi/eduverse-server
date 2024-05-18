@@ -4,6 +4,7 @@ import { OtpModel } from "../models/otpModel.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { ErrorHandler } from "../utils/utilityClass.js";
 import { Contact } from "../models/contactModel.js";
+import { User } from "../models/userModel.js";
 
 export const sendOtpEmail = async (req, res, next) => {
   try {
@@ -18,6 +19,13 @@ export const sendOtpEmail = async (req, res, next) => {
     if (!validate) {
       return next(new ErrorHandler("Please provide a valid email", 400));
     }
+
+    const user = await User.findOne({ email });
+
+    if (user) {
+      return next(new ErrorHandler("Email is already used", 400));
+    }
+
     const otp = String(Math.floor(1000 + Math.random() * 8000));
     console.log(otp);
 

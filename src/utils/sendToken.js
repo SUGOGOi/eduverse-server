@@ -8,8 +8,9 @@ export const sendToken = (res, user, message, statusCode = 200) => {
 
   const options = {
     expires: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
-    httpOnly: true,
-    secure: true,
+    httpOnly: true, // Cookie is not accessible via JavaScript
+    secure: true, // Set to true if using HTTPS
+    sameSite: "strict", // Helps prevent CSRF attacks
   };
   return res
     .status(statusCode)
