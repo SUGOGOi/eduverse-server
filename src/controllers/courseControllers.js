@@ -57,6 +57,12 @@ export const getCourseById = async (req, res, next) => {
       return next(new ErrorHandler("No course available", 404));
     }
 
+    const user = await User.findById(req.user._id);
+
+    if (user.isApproved === false) {
+      return next(new ErrorHandler("Wait for admin approval", 400));
+    }
+
     const person = await Course.findById(id)
       .populate("creatorID")
       .select("creatorID");
